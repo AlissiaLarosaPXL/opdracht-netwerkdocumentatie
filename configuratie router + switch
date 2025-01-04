@@ -1,0 +1,82 @@
+##Router configuratie
+hostname Router1
+enable secret cisco
+service password-encryption
+banner motd #Authorized access only! #
+
+ip domain-name netwerk.local
+crypto key generate rsa modulus 2048
+ip ssh version 2
+username admin privilege 15 secret cisco
+
+interface GigabitEthernet0/0/0
+ description Trunk naar Switches
+ no shutdown
+
+interface GigabitEthernet0/0/0.10
+ description VLAN 10
+ encapsulation dot1Q 10
+ ip address 192.168.1.1 255.255.255.0
+ ipv6 address 2001:db8:1::1/64
+ no shutdown
+
+interface GigabitEthernet0/0/0.20
+ description VLAN 20
+ encapsulation dot1Q 20
+ ip address 192.168.2.1 255.255.255.0
+ ipv6 address 2001:db8:2::1/64
+ no shutdown
+
+line vty 0 4
+ transport input ssh
+ login local
+
+line console 0
+ password console
+ login
+
+##Switch configuratie
+hostname Switch1
+enable secret cisco
+service password-encryption
+banner motd #Authorized access only! #
+
+vlan 10
+ name Subnet1
+vlan 20
+ name Subnet2
+
+interface GigabitEthernet0/1
+ description Verbinding naar Router
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+
+interface GigabitEthernet0/2
+ description Verbinding naar Switch2
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20
+
+interface range FastEthernet0/1-10
+ switchport mode access
+ switchport access vlan 10
+
+interface Vlan10
+ ip address 192.168.1.2 255.255.255.0
+ ipv6 address 2001:db8:1::2/64
+ no shutdown
+
+ip default-gateway 192.168.1.1
+
+ip domain-name netwerk.local
+crypto key generate rsa modulus 2048
+ip ssh version 2
+username admin privilege 15 secret cisco
+
+line vty 0 4
+ transport input ssh
+ login local
+
+line console 0
+ password console
+ login
+
