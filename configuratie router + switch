@@ -1,4 +1,5 @@
-##Router configuratie
+-Router configuratie
+
 hostname Router1
 enable secret cisco
 service password-encryption
@@ -35,7 +36,8 @@ line console 0
  password console
  login
 
-##Switch configuratie
+-Switch configuratie
+
 hostname Switch1
 enable secret cisco
 service password-encryption
